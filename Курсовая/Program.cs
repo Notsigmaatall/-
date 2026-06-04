@@ -1023,6 +1023,7 @@ namespace TelegramFinanceBot
         static async Task Main(string[] args)
         {
             Console.WriteLine("=== Telegram Бот для учёта финансов ===\n");
+
             string token = Environment.GetEnvironmentVariable("BOT_TOKEN");
             if (string.IsNullOrEmpty(token))
             {
@@ -1041,8 +1042,19 @@ namespace TelegramFinanceBot
 
             await bot.StartAsync(cts.Token);
 
-            Console.WriteLine("Нажми Enter для выхода...");
-            Console.ReadLine();
+            // На сервере не ждём Enter, а держим бота запущенным
+            // На локальном компьютере ждём Enter для выхода
+            if (Environment.GetEnvironmentVariable("RENDER") == null)
+            {
+                Console.WriteLine("Нажми Enter для выхода...");
+                Console.ReadLine();
+            }
+            else
+            {
+                // На Render просто ждём бесконечно
+                await Task.Delay(-1, cts.Token);
+            }
+
             cts.Cancel();
         }
     }
